@@ -23,9 +23,10 @@ class City(BaseModel, Base):
         state_id = ""
         name = ""
 
-
     def __init__(self, *args, **kwargs):
-    """initializes city"""
-    """Call the constructor of the BaseModel class to initialize common attributes"""
-    super().__init__(*args, **kwargs)
+        """initializes city
+        Call the constructor of the BaseModel class to initialize
+        common attributes
+        """
 
+    super().__init__(*args, **kwargs)
