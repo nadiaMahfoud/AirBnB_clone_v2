@@ -10,38 +10,33 @@ from models.amenity import Amenity
 from models.review import Review
 
 
-
-
-
-
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
 
-
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls is not None:
-            """ If cls is provided as a string, convert it to a class object"""
+            # If cls is provided as a string, convert it to a class object
             if type(cls) == str:
                 cls = eval(cls)
             my_dict = {}
-            """Iterate through the items in the __objects dictionary"""
+            # Iterate through the items in the __objects dictionary
             for key, value in self.__objects.items():
-                """Check if the type of the value matches the provided class (cls)"""
+                # Check if the type of the value
+                # matches the provided class (cls)
                 if type(value) == cls:
-                    """If it matches, add it to the my_dict dictionary"""
+                    # If it matches, add it to the my_dict dictionary
                     my_dict[key] = value
-                    """Return the filtered dictionary containing instances of the provided class"""
+                    # Return the filtered dictionary
+                    # containing instances of the provided class
             return my_dict
         return self.__objects
-
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
         self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
-
 
     def save(self):
         """Saves storage dictionary to file"""
@@ -52,10 +47,8 @@ class FileStorage:
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
-
     def reload(self):
         """Loads storage dictionary from file"""
-
 
         classes = {
                     'BaseModel': BaseModel, 'User': User, 'Place': Place,
@@ -71,14 +64,12 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
-
     def delete(self, obj=None):
         """It Deletes the object from __objects"""
         if obj is not None:
             key = "{}.{}".format(type(obj).__name__, obj.id)
             if key in self.__objects:
                 del self.__objects[key]
-
 
     def close(self):
         """Deserializing
