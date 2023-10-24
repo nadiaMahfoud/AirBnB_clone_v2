@@ -112,6 +112,3 @@ class DBStorage:
         This method closes the current session
         """
         self.__session.close()
-
-
-DBStorage.reload()
