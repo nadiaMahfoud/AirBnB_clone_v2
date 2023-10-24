@@ -28,9 +28,9 @@ class BaseModel:
         """ This method instantiates a new model"""
         if not kwargs:
             # Generating a unique ID
-            self.id = str(uuid.uuid4())
+            self.id = str(uuid4())
             # Setting the 'created_at','updated_at' timestamps to current time
-            self.created_at = self.updated_at = datetime.now()
+            self.created_at = self.updated_at = datetime.utcnow()
         else:
             if 'created_at' in kwargs:
                 # Converting the 'created_at' timestamp to a datetime object
@@ -59,7 +59,7 @@ class BaseModel:
         and saves the instance
         """
         # Updating the 'updated_at' timestamp to the current time
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.utcnow()
         # Adding the new instance to the storage
         models.storage.new(self)
         # Saving the instance using the storage
