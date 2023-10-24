@@ -30,7 +30,7 @@ class BaseModel:
             # Generating a unique ID
             self.id = str(uuid4())
             # Setting the 'created_at','updated_at' timestamps to current time
-            self.created_at = self.updated_at = datetime.utcnow()
+            self.created_at = self.updated_at = datetime.now()
         else:
             if 'created_at' in kwargs:
                 # Converting the 'created_at' timestamp to a datetime object
@@ -58,6 +58,7 @@ class BaseModel:
         """This method updates 'updated_at' with the current time
         and saves the instance
         """
+        from models import storage
         # Updating the 'updated_at' timestamp to the current time
         self.updated_at = datetime.utcnow()
         # Adding the new instance to the storage
@@ -73,10 +74,13 @@ class BaseModel:
         d['updated_at'] = self.updated_at.isoformat()
         # Removing SQLAlchemy internal state attribute
         d.pop('_sa_instance_state', None)
+        # Add the class name to the dictionary
+        d["__class__"] = type(self).__name__
         # Returning a dictionary representation of the instance
         return d
 
     def delete(self):
         """This method deletes the current instance from storage"""
+        from models import storage
         # Deleting the instance from the storage
         models.storage.delete(self)
