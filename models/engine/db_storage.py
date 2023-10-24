@@ -19,7 +19,7 @@ class DBStorage:
         __engine
         __session
     """
-    Private class attributes
+    # Private class attributes
     __engine = None
     __session = None
 

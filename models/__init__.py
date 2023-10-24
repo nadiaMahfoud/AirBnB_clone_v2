@@ -1,25 +1,22 @@
 #!/usr/bin/python3
 """This module instantiates an object of class FileStorage"""
 
-# Import the FileStorage class from the models.engine.file_storage module
-from models.engine.file_storage import FileStorage
-# Import the DBStorage class from the models.engine.db_storage module
-from models.engine.db_storage import DBStorage
-#  Import the getenv function from the os module
+from models.base_model import BaseModel, Base
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
+from sqlalchemy import (create_engine)
+from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from os import getenv
 
-
-"""  Check if the environment variable HBNB_TYPE_STORAGE is set to 'db'"""
-if getenv("HBNB_TYPE_STORAGE") == 'db':
-    # If it is, create an instance of DBStorage
-    # and assign it to the 'storage' variable
+if getenv('HBNB_TYPE_STORAGE') == 'db':
+    from models.engine.db_storage import DBStorage
     storage = DBStorage()
 else:
-    # If it's not set to 'db', create an instance of FileStorage
-    # and assign it to the 'storage' variable
+    from models.engine.file_storage import FileStorage
     storage = FileStorage()
 
-    # Load data into the 'storage' object,
-    # which could be either FileStorage
-    # or DBStorage based on the condition above"""
-    storage.reload()
+storage.reload()

@@ -2,33 +2,30 @@
 """This module defines a class User"""
 
 # Import necessary modules and classes
+import models
 from models.base_model import BaseModel, Base
+from os import getenv
+import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes"""
+    """Representation of a user """
+    if models.storage_t == 'db':
+        __tablename__ = 'users'
+        email = Column(String(128), nullable=False)
+        password = Column(String(128), nullable=False)
+        first_name = Column(String(128), nullable=True)
+        last_name = Column(String(128), nullable=True)
+        places = relationship("Place", backref="user")
+        reviews = relationship("Review", backref="user")
+    else:
+        email = ""
+        password = ""
+        first_name = ""
+        last_name = ""
 
-    # Define the name of the SQL table
-    __tablename__ = "users"
-
-    # Define user attributes as columns in the SQL table
-    # User's email, which is required
-    email = Column(String(128), nullable=False)
-
-    # User's password, which is required
-    password = Column(String(128), nullable=False)
-
-    # User's first name
-    first_name = Column(String(128))
-
-    # User's last name
-    last_name = Column(String(128))
-
-    # Define relationships with other classes
-    # A user can have multiple places
-    places = relationship('Place', backref='user', cascade='delete')
-
-    # A user can have multiple reviews
-    reviews = relationship('Review', backref='user', cascade='delete')
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
