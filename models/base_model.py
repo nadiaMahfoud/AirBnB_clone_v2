@@ -32,17 +32,16 @@ class BaseModel:
             # Setting the 'created_at','updated_at' timestamps to current time
             self.created_at = self.updated_at = datetime.now()
         else:
-            if 'created_at' in kwargs:
-                # Converting the 'created_at' timestamp to a datetime object
-                kwargs['created_at'] = datetime.strptime(
-                        kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
-            if 'updated_at' in kwargs:
-                # Converting the 'updated_at' timestamp to a datetime object
-                kwargs['updated_at'] = datetime.strptime(
-                        kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
             for key, value in kwargs.items():
-                # Setting the attributes based on key-value pairs in kwargs
-                setattr(self, key, value)
+                if key == 'created_at':
+                    # Converting the 'created_at' timestamp to a datetime object
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                if key == 'updated_at':
+                    # Converting the 'updated_at' timestamp to a datetime object
+                    value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+                if key != "__class__":
+                    # Setting the attributes based on key-value pairs in kwargs
+                    setattr(self, key, value)
 
     def __str__(self):
         """This method returns a string representation of the instance"""
