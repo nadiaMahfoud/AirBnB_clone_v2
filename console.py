@@ -117,31 +117,48 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """ Create an object of any class with given parameters """
         if not args:
             print("** class name missing **")
             return
-        arg_list = args.split()
+
+        arg_list = shlex.split(args)
         class_name = arg_list[0]
+
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[class_name]()
 
-        for arg in arg_list[1:]:
-            param = arg.split('=')
-            key = param[0]
-            val = param[1]
+        param_dict = {}
+        for param in arg_list[1:]:
+            param_parts = param.split('=')
+            if len(param_parts) != 2:
+                print(f"Invalid parameter: {param}")
+                continue
 
-            if val[0] == '\"':
-                val = val.replace('\"', '').replace('_', ' ')
-            elif '.' in val:
-                val = float(val)
+            key, value = param_parts
+
+            # Handle string values enclosed in double quotes
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1].replace('_', ' ').replace('\\"', '"')
+
+            # Convert to float if it contains a dot (.)
+            if '.' in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    print(f"Invalid float value: {param}")
+                    continue
             else:
-                val = int(val)
+                # Convert to int if it's an integer
+                try:
+                    value = int(value)
+                except ValueError:
+                    pass
 
-            setattr(new_instance, key, val)
+            param_dict[key] = value
 
+        new_instance = HBNBCommand.classes[class_name]()
         new_instance.save()
         print(new_instance.id)
 
@@ -341,5 +358,6 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-        if __name__ == "__main__":
-            HBNBCommand().cmdloop()
+
+if __name__ == "__main__":
+    HBNBCommand().cmdloop()
