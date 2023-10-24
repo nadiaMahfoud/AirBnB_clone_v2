@@ -23,7 +23,7 @@ class State(BaseModel, Base):
     # And, set the reference from City to State as 'state'
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         cities = relationship("City", backref="state",
-                              cascade="all, delete-orphan")
+                              cascade="all, delete,  delete-orphan")
 
     # For FileStorage:
     # Getter attribute to return a list of City instances

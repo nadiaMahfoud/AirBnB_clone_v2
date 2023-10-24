@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """This module is a database storage definition"""
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from models.base_model import BaseModel, Base
 from models.state import State
 from models.city import City
@@ -46,21 +46,37 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """
-        This method is to query all the objects in the database session"""
-        session = self.__session
+        """ This method is to query all the objects in the database session"""
+
+        # Check if the database session is available, and reload if not
+        if not self.__session:
+            self.reload()
+
+        # Initialize an empty dictionary to store the queried objects
         results_dict = {}
-        classes = [State, City, User, Place, Review, Amenity]
 
-        if cls is not None:
-            query = session.query(cls)
+        # If cls is a string, convert it to a class reference
+        if type(cls) == str:
+            cls = name2class.get(cls, None)
+
+        # If cls is provided and not None, query objects of that class
+        if cls:
+            for obj in self.__session.query(cls):
+                # Create a dictionary key using the class name and object ID
+                key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                results_dict[key] = obj
         else:
-            query = session.query(*classes)
+            # If cls is not provided , list of classes to query
+            classes_to_query = [State, City, User, Place, Review, Amenity]
 
-        for item in query.all():
-            key = "{}.{}".format(item.__class__.__name__, item.id)
-            results_dict[key] = item
+            # Iterate through each class and query objects of each class
+            for cls_to_query in classes_to_query:
+                for obj in self.__session.query(cls_to_query):
+                    # Create a dictionary key using the class name & object ID
+                    key = "{}.{}".format(obj.__class__.__name__, obj.id)
+                    results_dict[key] = obj
 
+        # Return the dictionary of objects
         return results_dict
 
     def new(self, obj):
@@ -84,8 +100,8 @@ class DBStorage:
         """
         This method creates tables and a new database session"""
         Base.metadata.create_all(self.__engine)
-        Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        self.__session = scoped_session(Session)
+        New_session = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(New_session)
         self.__session = Session()
 
     def get(self, cls, id):
