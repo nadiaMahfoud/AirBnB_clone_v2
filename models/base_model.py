@@ -46,12 +46,11 @@ class BaseModel:
     def __str__(self):
         """This method returns a string representation of the instance"""
         # Getting the class name as a string
-        class_str = (str(type(self)).split('.')[-1]).split('\'')[0]
         d = self.__dict__.copy()
         # Remove SQLAlchemys internal state attribute
         d.pop('_sa_instance_state', None)
         # Returning the formatted string representation of the instance
-        return '[{}] ({}) {}'.format(class_str, self.id, d)
+        return "[{}] ({}) {}".format(type(self).__name__, self.id, d)
 
     def save(self):
         """This method updates 'updated_at' with the current time
@@ -61,20 +60,20 @@ class BaseModel:
         # Updating the 'updated_at' timestamp to the current time
         self.updated_at = datetime.now()
         # Adding the new instance to the storage
-        storage.new(self)
+        models.storage.new(self)
         # Saving the instance using the storage
-        storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """This method converts the instance into a dictionary format"""
         d = self.__dict__.copy()
+        # Add the class name to the dictionary
+        d["__class__"] = str(type(self).__name__)
         # Formatting the 'created_at''updated_at' timestamps as ISO strings
         d['created_at'] = self.created_at.isoformat()
         d['updated_at'] = self.updated_at.isoformat()
         # Removing SQLAlchemy internal state attribute
         d.pop('_sa_instance_state', None)
-        # Add the class name to the dictionary
-        d["__class__"] = type(self).__name__
         # Returning a dictionary representation of the instance
         return d
 
@@ -82,4 +81,4 @@ class BaseModel:
         """This method deletes the current instance from storage"""
         from models.__init__ import storage
         # Deleting the instance from the storage
-        storage.delete(self)
+        models.storage.delete(self)
