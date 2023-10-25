@@ -34,10 +34,10 @@ class BaseModel:
         else:
             for key, value in kwargs.items():
                 if key == 'created_at':
-                    # Converting the 'created_at' timestamp to a datetime object
+                    # Converting the 'created_at' timestamp to a datetime obj
                     value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
                 if key == 'updated_at':
-                    # Converting the 'updated_at' timestamp to a datetime object
+                    # Converting the 'updated_at' timestamp to a datetime obj
                     value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
                 if key != "__class__":
                     # Setting the attributes based on key-value pairs in kwargs
@@ -57,13 +57,13 @@ class BaseModel:
         """This method updates 'updated_at' with the current time
         and saves the instance
         """
-        from models import storage
+        from models.__init__ import storage
         # Updating the 'updated_at' timestamp to the current time
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now()
         # Adding the new instance to the storage
-        models.storage.new(self)
+        storage.new(self)
         # Saving the instance using the storage
-        models.storage.save()
+        storage.save()
 
     def to_dict(self):
         """This method converts the instance into a dictionary format"""
@@ -80,6 +80,6 @@ class BaseModel:
 
     def delete(self):
         """This method deletes the current instance from storage"""
-        from models import storage
+        from models.__init__ import storage
         # Deleting the instance from the storage
-        models.storage.delete(self)
+        storage.delete(self)
