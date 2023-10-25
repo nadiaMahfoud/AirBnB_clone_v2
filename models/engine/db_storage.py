@@ -11,6 +11,12 @@ from models.review import Review
 from models.amenity import Amenity
 from os import getenv
 
+name2class = {'Amenity': Amenity, 'City': City, 'Place': Place,
+              'State': State,
+              'Review': Review,
+              'User': User
+              }
+
 
 class DBStorage:
     """This is the DBStorage class

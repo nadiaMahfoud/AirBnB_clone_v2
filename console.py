@@ -158,7 +158,14 @@ class HBNBCommand(cmd.Cmd):
 
             param_dict[key] = value
 
-        new_instance = HBNBCommand.classes[class_name]()
+        # Check if "name" is part of the parameters,
+        #and set it to the name attribute
+
+        if 'name' in param_dict:
+            name = param_dict['name']
+            param_dict['name'] = name  # Set 'name' attribute
+
+        new_instance = HBNBCommand.classes[class_name](**param_dict)
         new_instance.save()
         print(new_instance.id)
 
