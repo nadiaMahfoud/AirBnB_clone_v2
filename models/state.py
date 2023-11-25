@@ -1,14 +1,11 @@
 #!/usr/bin/python3
 """ This is the State Module for HBNB project """
-
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+from models.city import City
 import models
 from os import getenv
-from models.base_model import Base
-from models.base_model import BaseModel
-from sqlalchemy import Column
-from models.city import City
-from sqlalchemy import String
-from sqlalchemy.orm import relationship
 
 class State(BaseModel, Base):
     """ This is the definition of a State class """
