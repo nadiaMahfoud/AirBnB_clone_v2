@@ -22,14 +22,31 @@ class State(BaseModel, Base):
     # For DBStorage:
     # Linked City obj are automatically deleted if the State obj is deleted
     # And, set the reference from City to State as 'state'
-    cities = relationship("City", backref="state", cascade="delete")
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        cities = relationship("City", backref="state",
+                              cascade="all, delete,  delete-orphan")
 
-    if getenv("HBNB_TYPE_STORAGE") != "db":
+    # For FileStorage:
+    # Getter attribute to return a list of City instances
+    # with state_id equals to the current State.id
+    if getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def cities(self):
-            """Get a list of all related Cities."""
-            city_l = []
-            for city in list(models.storage.all(City).values()):
+            # Creating an empty list to store the City instances
+            # associated with this State
+            cities_list = []
+
+            # Getting all the City instances from the storage
+            all_cities = models.storage.all("City")
+
+            # Iterating through all the City instances
+            for city in all_cities.values():
+
+                # Checking if the state_id of the City matches id of this State
                 if city.state_id == self.id:
-                    city_l.append(city)
-            return city_l
+
+                    # If there's a match, add the City instance to the list
+                    cities_list.append(city)
+
+            # Returning the list of City instances associated with this State
+            return cities_list
