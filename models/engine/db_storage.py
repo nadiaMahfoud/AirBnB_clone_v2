@@ -104,11 +104,16 @@ class DBStorage:
 
     def reload(self):
         """
-        This method creates tables and a new database session"""
-        Base.metadata.create_all(self.__engine)
-        New_session = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scoped_session(New_session)
-        self.__session = Session()
+        This method creates tables and a new database session """
+        try:
+            with open(self.__file_path, "r", encoding="utf-8") as f:
+                for o in json.load(f).values():
+                    name = o["__class__"]
+                    del o["__class__"]
+                    self.new(eval(name)(**o))
+        except FileNotFoundError:
+            pass
+
     def get(self, cls, id):
         """
         This method is retrieving an object based on class name and id
