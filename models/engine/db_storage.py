@@ -20,7 +20,6 @@ name2class = {'Amenity': Amenity, 'City': City, 'Place': Place,
 
 class DBStorage:
     """This is the DBStorage class
-
     Attributes:
         __engine
         __session
@@ -104,15 +103,11 @@ class DBStorage:
 
     def reload(self):
         """
-        This method creates tables and a new database session """
-        try:
-            with open(self.__file_path, "r", encoding="utf-8") as f:
-                for o in json.load(f).values():
-                    name = o["__class__"]
-                    del o["__class__"]
-                    self.new(eval(name)(**o))
-        except FileNotFoundError:
-            pass
+        This method creates tables and a new database session"""
+        Base.metadata.create_all(self.__engine)
+        New_session = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(New_session)
+        self.__session = Session()
 
     def get(self, cls, id):
         """
@@ -128,7 +123,6 @@ class DBStorage:
         """
         This method counts the number of objects in
         the database for a given class
-
         If cls is None, count all objects.
         """
         return len(self.all(cls))
